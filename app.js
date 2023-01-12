@@ -101,23 +101,24 @@ const searchInput = document.querySelector('#searchInput')
 
     function setBorderCountry(data) {
 
-        html = `
-                    <div class="col-3 my-2">
-                    <div class="card text-center">
-                        <img class="card-img-top " src="${data.flags.png}" alt="Flag">
-                        <div class="card-body">
-                            <h4 class="card-title">${data.name.common}</h4>
-                            <p class="card-text">Population: ${Intl.NumberFormat().format(data.population)}</p>
-                            <ul class="list-group list-group-flush">
-                                    <li class="list-group-item"><span class ="info-head"> Capital:</span> ${data.capital}</li>
-                                
-                                
-                                    <li class="list-group-item"><span class ="info-head">Region:</span>  ${data.region}</li>
-                                
+          html = `
+        
+                    <div class="col-lg-4 col-md-6 col-sm-12 my-2">
+                        <div class="card text-center">
+                            <img class="card-img-top " src="${data.flags.png}" alt="Flag">
+                            <div class="card-body">
+                                <h4 class="card-title">${data.name.common}</h4>
+                                <p class="card-text">Population: ${Intl.NumberFormat().format(data.population)}</p>
+                                <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><span class ="info-head"> Capital:</span> ${data.capital}</li>
                                     
                                     
-                                </ul >
-                        </div >
+                                        <li class="list-group-item"><span class ="info-head">Region:</span>  ${data.region}</li>
+                                    
+                                        
+                                        
+                                    </ul >
+                            </div >
                     </div > </div >
                     
                     `
