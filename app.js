@@ -3,27 +3,35 @@
 
 
 const searchInput = document.querySelector('#searchInput')
-const searchBtn = document.querySelector('#searchBtn').addEventListener("click", () => {
+    const searchBtn = document.querySelector('#searchBtn').addEventListener("click", () => {
+        displayCountry(searchInput.value)
+    })
 
-    displayCountry(searchInput.value.toLowerCase())
-})
-
-
-  function displayCountry(country) {
+    function displayCountry(country) {
         // Reset before every query
         resetUI()
         // Fetch country
         fetch(`https://restcountries.com/v3.1/name/${country}`)
             .then((response) => {
+                if (!response.ok) {
+                    throw new Error("This country not found")
+                }
                 return response.json()
             })// Displaying country info by data
             .then((data) => {
                 setCountry(data[0]);
                 // Get border countries
-                const countries = data[0].borders.toString();
+                let countries;
+                if (data[0].borders != null) {
+                    countries = data[0].borders; // ts()
+                } else {
+                    throw new Error("There is no border countries.")
+                }
+                console.log(data[0])
                 // Fetch border countries by alpha codes
                 fetch(`https://restcountries.com/v3.1/alpha?codes=${countries}`)
                     .then((borders) => {
+                        console.log(borders)
                         return borders.json()
                     })
                     .then((borders) => {
@@ -36,16 +44,19 @@ const searchBtn = document.querySelector('#searchBtn').addEventListener("click",
                         document.querySelector('.col-12').insertAdjacentHTML('beforeend', `<h4> Border Countries </h4> <hr>`)
                     })
             })
+            .catch((err) => {
+                console.log(err)
+                renderError(err)
+            })
 
     }
 
 
 
-let html;
-function setCountry(data) {
-    console.log(data)
+    let html;
+    function setCountry(data) {
 
-    html = `
+        html = `
     <div class="col-12 my-2">
          <div class="card w-100 mb-3" >
             <div class="row g-0">
@@ -83,45 +94,52 @@ function setCountry(data) {
             </div>
         </div>
     </div>
-
-
     `
-    document.querySelector('.container .row').innerHTML += html
-}
+        document.querySelector('.container .row').innerHTML += html
+    }
 
 
-function setBorderCountry(data) {
-    console.log(data)
-    html = `
-    
-    <div class="col-3 my-2">
-    <div class="card text-center">
-        <img class="card-img-top " src="${data.flags.png}" alt="Flag">
-        <div class="card-body">
-            <h4 class="card-title">${data.name.common}</h4>
-            <p class="card-text">Population: ${Intl.NumberFormat().format(data.population)}</p>
-            <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><span class ="info-head"> Capital:</span> ${data.capital}</li>
-                
-                 
-                    <li class="list-group-item"><span class ="info-head">Region:</span>  ${data.region}</li>
-                   
+    function setBorderCountry(data) {
+
+        html = `
+                    <div class="col-3 my-2">
+                    <div class="card text-center">
+                        <img class="card-img-top " src="${data.flags.png}" alt="Flag">
+                        <div class="card-body">
+                            <h4 class="card-title">${data.name.common}</h4>
+                            <p class="card-text">Population: ${Intl.NumberFormat().format(data.population)}</p>
+                            <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><span class ="info-head"> Capital:</span> ${data.capital}</li>
+                                
+                                
+                                    <li class="list-group-item"><span class ="info-head">Region:</span>  ${data.region}</li>
+                                
+                                    
+                                    
+                                </ul >
+                        </div >
+                    </div > </div >
                     
-                    
-                  </ul >
-        </div >
-    </div > </div >
+                    `
+        document.querySelector('.container .row').innerHTML += html
 
-    
-    `
-    document.querySelector('.container .row').innerHTML += html
+    }
 
-}
+    function resetUI() {
+        document.querySelector('.errors').innerHTML = ""
+        document.querySelector('.container .row').innerHTML = ""
+    }
 
+    function renderError(err) {
 
-
-
-function resetUI() {
-    document.querySelector('.container .row').innerHTML = ""
-}
-
+        const html = `
+        
+            <div class ="alert alert-warning">
+                ${err.message}
+                </div>
+        `
+        setTimeout(() => {
+            document.querySelector('.errors').innerHTML = ""
+        }, 5000);
+        document.querySelector('.errors').innerHTML = html
+    }
