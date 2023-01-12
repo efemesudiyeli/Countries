@@ -1,17 +1,24 @@
-    const searchInput = document.querySelector('#searchInput')
+const searchInput = document.querySelector('#searchInput')
     const searchBtn = document.querySelector('#searchBtn').addEventListener("click", () => {
+
+
         displayCountry(searchInput.value)
     })
 
-     async function displayCountry(country) {
+    async function displayCountry(country) {
         // Reset before every query
         resetUI()
+        document.querySelector('.loading').style.display = "flex"
         // Fetch country
         try {
+
             const countryFetch = await fetch(`https://restcountries.com/v3.1/name/${country}`)
+
             if (!countryFetch.ok) {
                 throw new Error("This country not found")
             } else {
+
+                document.querySelector('.loading').style.display = "none"
                 const data = await countryFetch.json()
                 // Displaying country info by data
                 setCountry(data[0]);
@@ -26,6 +33,7 @@
                 // Fetch border countries by alpha codes
                 const borderFetch = await fetch(`https://restcountries.com/v3.1/alpha?codes=${countries}`)
                 const borderCountries = await borderFetch.json()
+
                 // iterate borders
                 for (const countries of borderCountries) {
                     // display border countries by border data
@@ -37,9 +45,11 @@
         } catch (err) {
             console.log(err)
             renderError(err)
+            document.querySelector('.loading').style.display = "none"
         }
 
     }
+
 
 
 
@@ -85,7 +95,7 @@
         </div>
     </div>
     `
-        document.querySelector('.container .row').innerHTML += html
+        document.querySelector('.container .info').innerHTML += html
     }
 
 
@@ -111,13 +121,13 @@
                     </div > </div >
                     
                     `
-        document.querySelector('.container .row').innerHTML += html
+        document.querySelector('.container .info').innerHTML += html
 
     }
 
     function resetUI() {
         document.querySelector('.errors').innerHTML = ""
-        document.querySelector('.container .row').innerHTML = ""
+        document.querySelector('.container .info').innerHTML = ""
     }
 
     function renderError(err) {
@@ -132,4 +142,41 @@
             document.querySelector('.errors').innerHTML = ""
         }, 5000);
         document.querySelector('.errors').innerHTML = html
+    }
+
+    // geoLocation
+    const api_key = "ceb7802f534a4e73929b5c6c42eb4711"
+
+    document.querySelector('#btnLocation').addEventListener("click", () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(onSuccess, onError)
+        }
+    })
+
+    function onError(err) {
+        console.log(err)
+    }
+    function onSuccess(position) {
+        let lat = position.coords.latitude;
+        let lng = position.coords.longitude;
+        // api, opencagedata
+        getLocation(lat, lng)
+
+
+    }
+
+    async function getLocation(latitude, longitude) {
+        try {
+            const fetchApi = await fetch
+                (`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${api_key}`);
+            const data = await fetchApi.json()
+            console.log(data)
+            const country = data.results[0].components.country;
+            displayCountry(country);
+            searchInput.value = country;
+        } catch (error) {
+            console.log(error)
+        }
+
+
     }
