@@ -1,39 +1,4 @@
-// callback
-// console.log('Start');
 
-// const login = (username, password, callback) => {
-//     setTimeout(() => {
-//         callback({ username: username, email: "info@asdasf.com" })
-//     }, 1000);
-// }
-
-// const getPostsByUsername = (username, callback) => {
-//     setTimeout(() => {
-//         callback(['post1', 'post2', 'post3'])
-//     }, 2000);
-// }
-
-// const getPostDetails = (post, callback) => {
-//     setTimeout(() => {
-//         callback("post details")
-//     }, 3000);
-// }
-
-// login('sadikturan', '12345', user => {
-//     console.log(user.username, user.email)
-
-//     getPostsByUsername(user.username, (posts) => {
-//         console.log(posts)
-
-//         getPostDetails(posts[1], (details) => {
-//             console.log(details)
-//         })
-//     })
-// })
-// // Callback Hell
-// console.log('End')
-
-// AJAX
 
 
 
