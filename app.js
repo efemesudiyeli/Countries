@@ -1,53 +1,43 @@
-
-
-
-
-const searchInput = document.querySelector('#searchInput')
+    const searchInput = document.querySelector('#searchInput')
     const searchBtn = document.querySelector('#searchBtn').addEventListener("click", () => {
         displayCountry(searchInput.value)
     })
 
-    function displayCountry(country) {
+     async function displayCountry(country) {
         // Reset before every query
         resetUI()
         // Fetch country
-        fetch(`https://restcountries.com/v3.1/name/${country}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("This country not found")
-                }
-                return response.json()
-            })// Displaying country info by data
-            .then((data) => {
+        try {
+            const countryFetch = await fetch(`https://restcountries.com/v3.1/name/${country}`)
+            if (!countryFetch.ok) {
+                throw new Error("This country not found")
+            } else {
+                const data = await countryFetch.json()
+                // Displaying country info by data
                 setCountry(data[0]);
                 // Get border countries
                 let countries;
                 if (data[0].borders != null) {
-                    countries = data[0].borders; // ts()
+                    countries = data[0].borders;
                 } else {
                     throw new Error("There is no border countries.")
                 }
                 console.log(data[0])
                 // Fetch border countries by alpha codes
-                fetch(`https://restcountries.com/v3.1/alpha?codes=${countries}`)
-                    .then((borders) => {
-                        console.log(borders)
-                        return borders.json()
-                    })
-                    .then((borders) => {
-                        // iterate borders
-                        for (const countries of borders) {
-                            // display border countries by border data
-                            setBorderCountry(countries)
-                        }
-                        // Border countries header before end
-                        document.querySelector('.col-12').insertAdjacentHTML('beforeend', `<h4> Border Countries </h4> <hr>`)
-                    })
-            })
-            .catch((err) => {
-                console.log(err)
-                renderError(err)
-            })
+                const borderFetch = await fetch(`https://restcountries.com/v3.1/alpha?codes=${countries}`)
+                const borderCountries = await borderFetch.json()
+                // iterate borders
+                for (const countries of borderCountries) {
+                    // display border countries by border data
+                    setBorderCountry(countries)
+                }
+                // Border countries header before end
+                document.querySelector('.col-12').insertAdjacentHTML('beforeend', `<h4> Border Countries </h4> <hr>`)
+            }
+        } catch (err) {
+            console.log(err)
+            renderError(err)
+        }
 
     }
 
