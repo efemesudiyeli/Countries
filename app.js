@@ -9,38 +9,35 @@ const searchBtn = document.querySelector('#searchBtn').addEventListener("click",
 })
 
 
-function displayCountry(country) {
-    resetUI()
-    const request = new XMLHttpRequest();
-    request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-    request.send();
+  function displayCountry(country) {
+        // Reset before every query
+        resetUI()
+        // Fetch country
+        fetch(`https://restcountries.com/v3.1/name/${country}`)
+            .then((response) => {
+                return response.json()
+            })// Displaying country info by data
+            .then((data) => {
+                setCountry(data[0]);
+                // Get border countries
+                const countries = data[0].borders.toString();
+                // Fetch border countries by alpha codes
+                fetch(`https://restcountries.com/v3.1/alpha?codes=${countries}`)
+                    .then((borders) => {
+                        return borders.json()
+                    })
+                    .then((borders) => {
+                        // iterate borders
+                        for (const countries of borders) {
+                            // display border countries by border data
+                            setBorderCountry(countries)
+                        }
+                        // Border countries header before end
+                        document.querySelector('.col-12').insertAdjacentHTML('beforeend', `<h4> Border Countries </h4> <hr>`)
+                    })
+            })
 
-
-    // bu talep bir asenkron işlem ne zaman geri döneceğini tahmin edemeyiz
-    request.addEventListener('load', function () {
-        let data = request.responseText;
-        // string to json
-        data = JSON.parse(data)
-        setCountry(data[0]);
-
-        // load border countries
-        const countries = data[0].borders.toString();
-        console.log(countries)
-        const req = new XMLHttpRequest();
-        req.open('GET', `https://restcountries.com/v3.1/alpha?codes=${countries}`)
-        req.send()
-        req.addEventListener('load', () => {
-            const data = JSON.parse(req.responseText);
-            console.log(data)
-
-            for (const country of data) {
-                setBorderCountry(country)
-            }
-
-            document.querySelector('.col-12').insertAdjacentHTML('beforeend', `<h4> Border Countries </h4> <hr>`)
-        })
-    })
-}
+    }
 
 
 
